@@ -46,10 +46,14 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let ruta_to_save:string = "";
             let img_url_aux:string = "";
             if (news_content.contenido !== '') {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("La Imagen no se cargó correctamente.");
+                    }
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -76,10 +80,14 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let ruta_to_save:string = "";
             let video_url_aux:string = "";
             if (news_content.contenido !== '') {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("El Video no se cargó correctamente.");
+                    }
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -91,7 +99,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             }
             
             try {
-                // Se mueve la imagen solo despues de que se validó de forma definiva
+                // Se mueve el Video solo despues de que se validó de forma definiva
                 //fs.renameSync(video_url_aux, ruta_to_save);
                 await mvPromise(video_url_aux, ruta_to_save);
             } catch (error:Error | any) {
@@ -106,10 +114,14 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let ruta_to_save:string = "";
             let audio_url_aux:string = "";
             if (news_content.contenido !== '') {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("El Audio no se cargó correctamente.");
+                    }
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -121,7 +133,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             }
             
             try {
-                // Se mueve la imagen solo despues de que se validó de forma definiva
+                // Se mueve el Audio solo despues de que se validó de forma definiva
                 //fs.renameSync(audio_url_aux, ruta_to_save);
                 await mvPromise(audio_url_aux, ruta_to_save);
             } catch (error:Error | any) {
@@ -146,10 +158,14 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let img_url_aux:string = "";
             // Primero reviso que sea diferente de vacio
             if (news_content.contenido !== '' && news_content.contenido !== undefined && news_content.contenido !== null) {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     // Envio contenido, tipo para el mensaje de error y el verificador de imagen ya subida en el servidor cropeada.
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, img_url_old_cropped);
+
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("La Imagen no se cargó correctamente.");
+                    }
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -187,9 +203,12 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let ruta_to_save:string = "";
             let video_url_aux:string = "";
             if (news_content.contenido !== '') {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("El Video no se cargó correctamente.");
+                    }
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -201,7 +220,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
 
                 if(news_content_DB.contenido !== '' && news_content_DB.contenido !== null && news_content_DB.contenido !== undefined){
                     try {
-                        this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url de la imagen vieja a reemplazar pa que se elimine
+                        this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url del Video viejo a reemplazar pa que se elimine
                     } catch (error:Error | any) {
                         console.error(error);
                         // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de deleteOldFileOnUpdate
@@ -211,7 +230,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             }
             
             try {
-                // Se mueven la imagen solo despues de que se validó de forma definiva
+                // Se mueve el Video solo despues de que se validó de forma definiva
                 if(video_url_aux != "" && ruta_to_save != ""){
                     //fs.renameSync(img_url_aux, ruta_to_save);
                     await mvPromise(video_url_aux, ruta_to_save);
@@ -228,9 +247,13 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             let ruta_to_save:string = "";
             let audio_url_aux:string = "";
             if (news_content.contenido !== '') {
-                let verify_result:string[] = [];
+                let verify_result:string[]|null = [];
                 try {
                     verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                    if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                        throw new Error("El Audio no se cargó correctamente.");
+                    }
+
                 } catch (error:Error | any) {
                     console.error(error);
                     // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -242,7 +265,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
 
                 if(news_content_DB.contenido !== '' && news_content_DB.contenido !== null && news_content_DB.contenido !== undefined){
                     try {
-                        this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url de la imagen vieja a reemplazar pa que se elimine
+                        this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url del Audio viejo a reemplazar pa que se elimine
                     } catch (error:Error | any) {
                         console.error(error);
                         // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de deleteOldFileOnUpdate
@@ -252,7 +275,7 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
             }
 
             try {
-                // Se mueven la imagen solo despues de que se validó de forma definiva
+                // Se mueven el Audio solo despues de que se validó de forma definiva
                 if(audio_url_aux != "" && ruta_to_save != ""){
                     //fs.renameSync(img_url_aux, ruta_to_save);
                     await mvPromise(audio_url_aux, ruta_to_save);
@@ -324,19 +347,22 @@ export class NewsContentCRUDUC implements NewsContentAdminUsecase {
         }
     }
 
-    verifyFileExists(new_image: string, tipo_file: number, img_url_old_cropped:boolean) : string[]{
+    verifyFileExists(new_image: string, tipo_file: number, img_url_old_cropped:boolean) : string[]|null{
         let originalname_aux:string = "";
         let array_string:string[] = [];
 
         if(new_image.includes('/')){
             // linux
             array_string = new_image.split("/");
-            originalname_aux = array_string[array_string.length -1];
         } else {
             // windows
             array_string = new_image.split("\\");
-            originalname_aux = array_string[array_string.length -1];
         }
+        let name:string|undefined = array_string[array_string.length -1];
+        if(name == undefined){
+            return null;
+        }
+
         //console.log(originalname_aux);
         originalname_aux = originalname_aux.trim()
                             .toLowerCase()
