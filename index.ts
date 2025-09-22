@@ -32,17 +32,24 @@ import { SearchCRUDUC } from './src/search/usecase/crud';
 import { SemaforoSeoHandler } from './src/semaforo_seo/delivery/http';
 import { SemaforoSeoCRUDUC } from './src/semaforo_seo/usecase/crud';
 
-
+// Config
+import {
+    DB_HOST,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_DATABASE,
+} from './src/config';
 
 // Database Initialization
 // INICIAR LA BD CON LA SELECCION DE DOTENV
 const appDataSource = new DataSource({
     type: "mysql",
-    host: process.env.DB_HOST ?? "localhost",
-    port: 3306,
-    username: process.env.DB_USER ?? "",
-    password: process.env.DB_PASSWORD ?? "",
-    database: process.env.DB_DATABASE ?? "activate_fm",
+    host: DB_HOST ?? "localhost",
+    port: DB_PORT ?? 3306,
+    username: DB_USER ?? "",
+    password: DB_PASSWORD ?? "",
+    database: DB_DATABASE ?? "articles_editor_db",
     synchronize: false, // en produccion debe ser falso, ponerlo en true solo cuando queramos migrar desde 0 la BD
     logging: true,
     entities: [
@@ -66,7 +73,7 @@ let userRepo = new ORMUserRepository(appDataSource);
 
 
 // Usecases Initialization
-let newsAdminUC = new NewsCRUDUC(newsRepo, newsContentRepo, podcastRepo);
+let newsAdminUC = new NewsCRUDUC(newsRepo, newsContentRepo);
 let newsUC = new NewsCommonUC(newsRepo, newsContentRepo);
 
 let newsContentUC = new NewsContentCRUDUC(newsRepo, newsContentRepo);

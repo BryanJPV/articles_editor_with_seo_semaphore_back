@@ -131,8 +131,13 @@ export class NewsAdminHandler {
         if (!isAuthenticated) {
             return;
         }
+        if(req.params.id == undefined) {
+            res.status(400)
+            res.json( { error : ["El ID de la Noticia debe ser un valor numérico."] } )
+            return
+        }
 
-        let id_to_search = parseInt(req.params.id);
+        let id_to_search:number = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
 
         let news = null;
         try {
@@ -190,7 +195,7 @@ export class NewsAdminHandler {
 
         try {
             // VALIDACIÓN FILE IMG
-            if(files == undefined || files['img_url_blob'] == null){
+            if(files == undefined || files['img_url_blob'] == null || files['img_url_blob'][0] == undefined){
                 res.status(400)
                 res.json({ error: ["No se puede registrar la Noticia sin subir ninguna Imagen."] });
                 return;
@@ -263,12 +268,13 @@ export class NewsAdminHandler {
             return;
         }
 
-        let id_to_update = parseInt(req.params.id);
-        if (id_to_update == undefined || typeof id_to_update != "number") {
+        if(req.params.id == undefined) {
             res.status(400)
-            res.json( { error : ["El id debe ser un valor numérico."] } )
+            res.json( { error : ["El ID de la Noticia debe ser un valor numérico."] } )
             return
         }
+
+        let id_to_update:number = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
 
         // Parsing Seo_Url
         let seo_url_parseado:string = await this.parsingSeoUrl(req.body.seo_url);
@@ -303,7 +309,7 @@ export class NewsAdminHandler {
         try {
             // VALIDACIÓN FILE IMG
             if(files != undefined){
-                if(files['img_url_blob'] != undefined && files['img_url_blob'] != null){
+                if(files['img_url_blob'] != undefined && files['img_url_blob'] != null && files['img_url_blob'][0] != undefined){
                     // VALIDACIÓN PESO FILE IMG
                     let peso_img_url_blob:number = files['img_url_blob'][0].size;
                     let peso_max_img_url_blob:number = 15*1024*1024; // 15Mb
@@ -380,16 +386,17 @@ export class NewsAdminHandler {
             return;
         }
 
-        let id = parseInt(req.params.id);
-        if (id == undefined) {
+        if(req.params.id == undefined) {
             res.status(400)
-            res.json( { error : ["El id debe ser un valor numérico"] } )
+            res.json( { error : ["El ID de la Noticia debe ser un valor numérico."] } )
             return
         }
 
+        let id_to_delete:number = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
+
         let newNews = null;
         try {
-            newNews = await this.newsUC.delete(id)
+            newNews = await this.newsUC.delete(id_to_delete)
             if (newNews == null) {
                 res.status(400)
                 res.json( { error : [ "Error al buscar la Noticia a eliminar o Noticia no encontrado." ] } )
@@ -403,5 +410,4 @@ export class NewsAdminHandler {
         }
         res.json({ message: "Se ha eliminado la Noticia exitosamente." });
     }
-
 }

@@ -44,7 +44,13 @@ export class NewsCommonHandler {
         res.json( events_res );
     }
     async byID (req: Request, res: Response) {
-        let id_to_search = parseInt(req.params.id);
+        if(req.params.id == undefined) {
+            res.status(400)
+            res.json( { error : ["El ID de la Noticia debe ser un valor numérico."] } )
+            return
+        }
+
+        let id_to_search:number = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
 
         let news = null;
         try {
@@ -66,6 +72,11 @@ export class NewsCommonHandler {
         res.json( news );
     }
     async bySeoURL (req: Request, res: Response) {
+        if(req.params.seo_url == undefined) {
+            res.status(400)
+            res.json( { error : ["El SEO URL de la Noticia debe ser una cadena de caracteres."] } )
+            return
+        }
         let seo_url_to_search = req.params.seo_url;
 
         let news = null;

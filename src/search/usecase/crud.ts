@@ -1,11 +1,5 @@
-import { AdRepository } from "../../domain/ads";
-import { ArtistaRepository } from "../../domain/artistas";
-import { EventRepository } from "../../domain/events";
 import { NewsRepository } from "../../domain/news";
 import { NewsContentRepository } from "../../domain/news_content";
-import { PodcastEpisodeRepository } from "../../domain/podcast_episodes";
-import { PodcastRepository } from "../../domain/podcasts";
-import { TipoEntrada, TipoEntradaRepository } from "../../domain/tipos_entradas";
 
 import { SearchUsecase } from "../../domain/search"
 
@@ -16,33 +10,15 @@ const ruta_json_words_to_ignore:string = __dirname.replace("src\\search\\usecase
 const ruta_json_words_to_ignore2:string = __dirname.replace("src\\search\\usecase", "").replace("src/search/usecase", "") + ( Os.platform() === "linux" ? "src/assets/search_json_stuff/stopwords_spanish2.json" : "src\\assets\\search_json_stuff\\stopwords_spanish2.json");
 
 export class SearchCRUDUC implements SearchUsecase {
-    artistaRepo : ArtistaRepository;
-    adRepo : AdRepository;
-    eventRepo: EventRepository;
     newsRepo: NewsRepository;
     newsContentRepo: NewsContentRepository;
-    podcastEpisodeRepo: PodcastEpisodeRepository;
-    podcastRepo: PodcastRepository;
-    tipoEntradaRepo: TipoEntradaRepository;
 
     constructor(
-        adRepo : AdRepository,
-        artistaRepo: ArtistaRepository,
-        eventRepo: EventRepository,
         newsRepo: NewsRepository,
         newsContentRepo: NewsContentRepository,
-        podcastEpisodeRepo: PodcastEpisodeRepository,
-        podcastRepo: PodcastRepository,
-        tipoEntradaRepo: TipoEntradaRepository
     ) {
-        this.adRepo = adRepo;
-        this.artistaRepo = artistaRepo;
-        this.eventRepo = eventRepo;
         this.newsRepo = newsRepo;
         this.newsContentRepo = newsContentRepo;
-        this.podcastEpisodeRepo = podcastEpisodeRepo;
-        this.podcastRepo = podcastRepo;
-        this.tipoEntradaRepo = tipoEntradaRepo;
     }
 
     /* async sort_words() : Promise<any[] | null> {
@@ -118,10 +94,10 @@ export class SearchCRUDUC implements SearchUsecase {
         try {
             //ads = await this.search4Ads(wordsToSearch)
             //artistas = await this.search4Artista(wordsToSearch)
-            events = await this.search4Events(wordsToSearch)
+            //events = await this.search4Events(wordsToSearch)
             news = await this.search4News(wordsToSearch)
-            podcasts_episodes = await this.search4PodcastEpisodes(wordsToSearch)
-            podcasts = await this.search4Podcasts(wordsToSearch)
+            //podcasts_episodes = await this.search4PodcastEpisodes(wordsToSearch)
+            //podcasts = await this.search4Podcasts(wordsToSearch)
         } catch (error:Error | any) {
             console.log(error);
             throw new Error("Error interno, no se pudo realizar la busqueda correctamente, intente de nuevo.");
@@ -129,16 +105,16 @@ export class SearchCRUDUC implements SearchUsecase {
 
         return {
             // Solo retorno las palabras a buscar mediante Events, con los otros modulos no para enviarlo al FrontEnd
-            words_to_search: events != null ? events[0].words_to_search: null,
+            //words_to_search: events != null ? events[0].words_to_search: null,
             //ads: ads,
             //artistas: artistas,
-            events: events[0].events,
+            //events: events[0].events,
             // Retorno dividio en dos las noticias, en news las noticias que tienen resultados en sus propiedades, y en news_with_news_content
             // las que tienen resultados solo en sus news_content
             news: news != null ? news[0].news: null,
             news_with_news_content: news != null ? news[0].news_with_news_content: null,
-            podcasts_episodes: podcasts_episodes,
-            podcasts: podcasts,
+            //podcasts_episodes: podcasts_episodes,
+            //podcasts: podcasts,
         }
     }
     
@@ -152,24 +128,8 @@ export class SearchCRUDUC implements SearchUsecase {
     async search4Artista(wordsToSearch:string[]) : Promise<any[]> {
         return await this.artistaRepo.search4Artista(wordsToSearch)
     } */
-
-    // EVENTS
-    async search4Events(wordsToSearch:string[]) : Promise<any[]> {
-        return await this.eventRepo.search4Events(wordsToSearch)
-    }
-
     // NEWS
     async search4News(wordsToSearch:string[]) : Promise<any[]> {
         return await this.newsRepo.search4News(wordsToSearch)
-    }
-
-    // PODCAST EPISODES 
-    async search4PodcastEpisodes(wordsToSearch:string[]) : Promise<any[]> {
-        return await this.podcastEpisodeRepo.search4PodcastEpisodes(wordsToSearch)
-    }
-
-    // PODCAST
-    async search4Podcasts(wordsToSearch:string[]) : Promise<any[]> {
-        return await this.podcastRepo.search4Podcasts(wordsToSearch)
     }
 }

@@ -1,5 +1,5 @@
 import { News, NewsCommonUsecase, NewsRepository } from "../../domain/news"
-import { NewsContentRepository } from "../../domain/news_content";
+import { NewsContent, NewsContentRepository } from "../../domain/news_content";
 
 export class NewsCommonUC implements NewsCommonUsecase {
     newsRepo: NewsRepository;
@@ -12,24 +12,30 @@ export class NewsCommonUC implements NewsCommonUsecase {
 
     async list() : Promise<News[]> {
         let newsList = await this.newsRepo.list();
-
-        for (let index = 0; index < newsList.length; index++) {
-            let newsContentList = await this.newsContentRepo.listByNewsId(newsList[index].id);
-            newsList[index].news_content = newsContentList;
+        if(newsList.length == 0 || newsList == null || newsList == undefined) {
+            return [];
         }
+        for (const item of newsList) {
+            if (!item) continue;
 
+            let newsContentList:NewsContent[] = await this.newsContentRepo.listByNewsId(item.id);
+            item.news_content = newsContentList;
+        }
         return newsList
     }
     async listByPagination(inicio:number, cantidad: number) : Promise<News[]> {
         let newsList = await this.newsRepo.listByPagination(inicio,cantidad);
-        if (newsList != null && newsList !== undefined) {
-            for (let index = 0; index < newsList.length; index++) {
-                let newsContentList = await this.newsContentRepo.listByNewsId(newsList[index].id);
-                newsList[index].news_content = newsContentList;
-            }
-            return newsList
+        if(newsList.length == 0 || newsList == null || newsList == undefined) {
+            return [];
         }
-        return []
+
+        for (const item of newsList) {
+            if (!item) continue;
+
+            let newsContentList:NewsContent[] = await this.newsContentRepo.listByNewsId(item.id);
+            item.news_content = newsContentList;
+        }
+        return newsList
     }
     async byID(id: number) : Promise<News | null> {
         let news = await this.newsRepo.byID(id)

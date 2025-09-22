@@ -1,6 +1,5 @@
 import { News, NewsAdminUsecase, NewsRepository } from "../../domain/news"
-import { NewsContentRepository } from "../../domain/news_content";
-import { PodcastRepository } from "../../domain/podcasts"
+import { NewsContent, NewsContentRepository } from "../../domain/news_content";
 import fs from 'fs'
 import mv from 'mv'
 import util from 'util'
@@ -20,23 +19,26 @@ const ruta_imagen:string = __dirname.replace("src\\news\\usecase", "").replace("
 export class NewsCRUDUC implements NewsAdminUsecase {
     newsRepo: NewsRepository;
     newsContentRepo: NewsContentRepository;
-    podcastRepo: PodcastRepository;
 
-    constructor(newsRepo: NewsRepository, newsContentRepo: NewsContentRepository, podcastRepo: PodcastRepository) {
+    constructor(newsRepo: NewsRepository, newsContentRepo: NewsContentRepository) {
         this.newsRepo = newsRepo;
         this.newsContentRepo = newsContentRepo;
-        this.podcastRepo = podcastRepo;
     }
 
     async list() : Promise<News[]> {
-        let newsList = await this.newsRepo.listAdmin();
-
-        for (let index = 0; index < newsList.length; index++) {
-            let newsContentList = await this.newsContentRepo.listByNewsId(newsList[index].id);
-            newsList[index].news_content = newsContentList;
+        let newsList:News[] = await this.newsRepo.listAdmin();
+        if(newsList.length == 0 || newsList == null || newsList == undefined) {
+            return [];
         }
 
-        return newsList //await this.newsRepo.list()
+        for (const item of newsList) {
+            if (!item) continue;
+
+            let newsContentList:NewsContent[] = await this.newsContentRepo.listByNewsId(item.id);
+            item.news_content = newsContentList;
+        }
+
+        return newsList; //await this.newsRepo.list()
     }
     async byID(id: number) : Promise<News | null> {
         let news = await this.newsRepo.byIDAdmin(id)
@@ -54,10 +56,15 @@ export class NewsCRUDUC implements NewsAdminUsecase {
         // registro de imagen
         let ruta_to_save:string = "";
         let img_url_aux:string = "";
-        if (news.img_url !== '') {let verify_result:string[] = [];
+        if (news.img_url !== '') {
+            let verify_result:string[]|null = [];
             try {
                 // Envio false como img_url_old_cropped:boolean porque solo se debería verificar su uso en Update
                 verify_result = this.verifyFileExists(news.img_url, false);
+
+                if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                    throw new Error("La Imagen no se cargó correctamente.");
+                }
             } catch (error:Error | any) {
                 console.error(error);
                 // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -97,9 +104,12 @@ export class NewsCRUDUC implements NewsAdminUsecase {
         let img_url_aux:string = "";
         // Primero reviso que sea diferente de vacio
         if (news.img_url !== '' && news.img_url !== undefined && news.img_url !== null) {
-            let verify_result:string[] = [];
+            let verify_result:string[]|null = [];
             try {
                 verify_result = this.verifyFileExists(news.img_url, img_url_old_cropped);
+                if(verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined){
+                    throw new Error("La Imagen no se cargó correctamente.");
+                }
             } catch (error:Error | any) {
                 console.error(error);
                 // Se retorna en un throw a la capa de delivery el mensaje que ya de por si viene del throw de verifyFileExists
@@ -154,10 +164,6 @@ export class NewsCRUDUC implements NewsAdminUsecase {
             throw new Error("La Noticia que está intentando eliminar posee Componentes registrados, no se puede eliminar.");
         }
 
-        if(await this.podcastRepo.isThisNewsLinked(id)){
-            throw new Error("La Noticia que está intentando eliminar se encuentra Ligada a un Podcast registrado, no se puede eliminar.");
-        }
-
         try {
             await this.deletePhotoNews(id);
         } catch (error:Error | any) {
@@ -183,20 +189,23 @@ export class NewsCRUDUC implements NewsAdminUsecase {
         }
     }
 
-    verifyFileExists(new_image: string, img_url_old_cropped:boolean) : string[]{
+    verifyFileExists(new_image: string, img_url_old_cropped:boolean) : string[] | null{
         let originalname_aux:string = "";
         let array_string:string[] = [];
 
         if(new_image.includes('/')){
             // linux
             array_string = new_image.split("/");
-            originalname_aux = array_string[array_string.length -1];
         } else {
             // windows
             array_string = new_image.split("\\");
-            originalname_aux = array_string[array_string.length -1];
         }
-        originalname_aux = originalname_aux.trim()
+        let name:string|undefined = array_string[array_string.length -1];
+        if(name == undefined){
+            return null;
+        }
+
+        originalname_aux = name.trim()
                             .toLowerCase()
                             .replace(/ /g, '_')
                             .replace(/ +/g, '-')

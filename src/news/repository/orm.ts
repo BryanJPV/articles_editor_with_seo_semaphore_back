@@ -1,7 +1,6 @@
 import { News, NewsRepository } from "../../domain/news"
 import { DataSource,Entity, PrimaryGeneratedColumn, Column, OneToMany, Repository, UpdateDateColumn, CreateDateColumn, Not, Raw, In, LessThanOrEqual, IsNull } from "typeorm"
 import { NewsContentORM } from "../../news_content/repository/orm"
-import { PodcastArticlesORM } from "../../podcasts/repository/orm"
 
 @Entity("news")
 export class NewsORM {
@@ -66,13 +65,11 @@ export class ORMNewsRepository implements NewsRepository{
     dataSource: DataSource;
     newsRepoORM: Repository<NewsORM>;
     newsContentRepoORM: Repository<NewsContentORM>;
-    podcastArticlesRepoORM: Repository<PodcastArticlesORM>;
     
     constructor (dataSource: DataSource) {
         this.dataSource = dataSource;
         this.newsRepoORM = this.dataSource.getRepository(NewsORM);
         this.newsContentRepoORM = this.dataSource.getRepository(NewsContentORM);
-        this.podcastArticlesRepoORM = this.dataSource.getRepository(PodcastArticlesORM);
     }
 
     // Common
@@ -275,46 +272,6 @@ export class ORMNewsRepository implements NewsRepository{
             return null;
         }
         const news: News[] = newsModel.map((newsORM: NewsORM) => newsORM.toNews());
-        return news;
-    }
-
-    // Podcast Articles
-    async newsByPodcastID(podcastId: number) : Promise<News[]> {
-        const podcastArticlesModels = await this.podcastArticlesRepoORM.find({
-            where: { podcast_id: podcastId },
-            relations: { news: true },
-            order: { news_id: "DESC" },
-        });
-        const news: News[] = podcastArticlesModels.map((podcastArticles) => podcastArticles.news.toNews())
-        return news;
-    }
-    
-    async listUnlinkedNewsByPodcastId(podcastId: number) : Promise<News[]>{
-        const podcastArticlesModels = await this.podcastArticlesRepoORM.find({ 
-            where: {
-                podcast_id: podcastId
-            }
-        });
-        if (podcastArticlesModels === null) {
-            console.log('Not found!');
-            return [];
-        }
-
-        let array_ids_news_already_linked:number[] = [];
-        podcastArticlesModels.forEach((podcast_article:any) => {
-            array_ids_news_already_linked.push(podcast_article.news_id);
-        })
-        console.log(array_ids_news_already_linked);
-        
-        const newsModels = await this.newsRepoORM.find({ 
-            where: {
-                id: Not(In(array_ids_news_already_linked))
-            },
-            order: {
-                id: "DESC",
-            },
-        });
-        const news: News[] = newsModels.map((newsORM: NewsORM) => newsORM.toNews())
         return news;
     }
 
