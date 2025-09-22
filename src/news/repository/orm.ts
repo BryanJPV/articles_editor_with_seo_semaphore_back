@@ -128,12 +128,7 @@ export class ORMNewsRepository implements NewsRepository{
             ],
         });
 
-        if (newsModel[0] === null) {
-            console.log('Not found!');
-            return null;
-        }
-
-        if (!newsModel[0].status) {
+        if (newsModel[0] === null || newsModel[0] === undefined || !newsModel[0].status) {
             console.log('Not found!');
             return null;
         }
@@ -155,6 +150,10 @@ export class ORMNewsRepository implements NewsRepository{
             return null;
         }
         const news: News[] = newsModel.map((newsORM: NewsORM) => newsORM.toNews());
+        if (news[0] === undefined) {
+            console.log('Not found!');
+            return null;
+        }
         return news[0];
     }
 

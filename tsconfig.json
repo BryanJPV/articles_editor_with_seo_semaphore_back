@@ -20,6 +20,12 @@
     // "types": ["node"],
     // and npm install -D @types/node
 
+    // Decorators TypeORM TS 5.0++
+    "useDefineForClassFields": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
