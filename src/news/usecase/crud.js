@@ -20,17 +20,21 @@ const os_1 = __importDefault(require("os"));
 const mvPromise = util_1.default.promisify((source, dest, cb) => (0, mv_1.default)(source, dest, { mkdirp: true }, (err) => cb(err)));
 const ruta_imagen = __dirname.replace("src\\news\\usecase", "").replace("src/news/usecase", "") + (os_1.default.platform() === "linux" ? "public/news/img/" : "public\\news\\img\\");
 class NewsCRUDUC {
-    constructor(newsRepo, newsContentRepo, podcastRepo) {
+    constructor(newsRepo, newsContentRepo) {
         this.newsRepo = newsRepo;
         this.newsContentRepo = newsContentRepo;
-        this.podcastRepo = podcastRepo;
     }
     list() {
         return __awaiter(this, void 0, void 0, function* () {
             let newsList = yield this.newsRepo.listAdmin();
-            for (let index = 0; index < newsList.length; index++) {
-                let newsContentList = yield this.newsContentRepo.listByNewsId(newsList[index].id);
-                newsList[index].news_content = newsContentList;
+            if (newsList.length == 0 || newsList == null || newsList == undefined) {
+                return [];
+            }
+            for (const item of newsList) {
+                if (!item)
+                    continue;
+                let newsContentList = yield this.newsContentRepo.listByNewsId(item.id);
+                item.news_content = newsContentList;
             }
             return newsList; //await this.newsRepo.list()
         });
@@ -58,6 +62,9 @@ class NewsCRUDUC {
                 try {
                     // Envio false como img_url_old_cropped:boolean porque solo se debería verificar su uso en Update
                     verify_result = this.verifyFileExists(news.img_url, false);
+                    if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                        throw new Error("La Imagen no se cargó correctamente.");
+                    }
                 }
                 catch (error) {
                     console.error(error);
@@ -99,6 +106,9 @@ class NewsCRUDUC {
                 let verify_result = [];
                 try {
                     verify_result = this.verifyFileExists(news.img_url, img_url_old_cropped);
+                    if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                        throw new Error("La Imagen no se cargó correctamente.");
+                    }
                 }
                 catch (error) {
                     console.error(error);
@@ -138,8 +148,8 @@ class NewsCRUDUC {
         });
     }
     delete(id) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             try {
                 let newsToDelete = yield this.newsRepo.byIDAdmin(id);
                 console.log(newsToDelete);
@@ -152,9 +162,6 @@ class NewsCRUDUC {
             }
             if (yield this.newsRepo.hasNewsContent(id)) {
                 throw new Error("La Noticia que está intentando eliminar posee Componentes registrados, no se puede eliminar.");
-            }
-            if (yield this.podcastRepo.isThisNewsLinked(id)) {
-                throw new Error("La Noticia que está intentando eliminar se encuentra Ligada a un Podcast registrado, no se puede eliminar.");
             }
             try {
                 yield this.deletePhotoNews(id);
@@ -189,14 +196,16 @@ class NewsCRUDUC {
         if (new_image.includes('/')) {
             // linux
             array_string = new_image.split("/");
-            originalname_aux = array_string[array_string.length - 1];
         }
         else {
             // windows
             array_string = new_image.split("\\");
-            originalname_aux = array_string[array_string.length - 1];
         }
-        originalname_aux = originalname_aux.trim()
+        let name = array_string[array_string.length - 1];
+        if (name == undefined) {
+            return null;
+        }
+        originalname_aux = name.trim()
             .toLowerCase()
             .replace(/ /g, '_')
             .replace(/ +/g, '-')

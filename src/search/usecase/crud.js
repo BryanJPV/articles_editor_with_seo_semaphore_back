@@ -18,15 +18,9 @@ const os_1 = __importDefault(require("os"));
 const ruta_json_words_to_ignore = __dirname.replace("src\\search\\usecase", "").replace("src/search/usecase", "") + (os_1.default.platform() === "linux" ? "src/assets/search_json_stuff/stopwords_spanish.json" : "src\\assets\\search_json_stuff\\stopwords_spanish.json");
 const ruta_json_words_to_ignore2 = __dirname.replace("src\\search\\usecase", "").replace("src/search/usecase", "") + (os_1.default.platform() === "linux" ? "src/assets/search_json_stuff/stopwords_spanish2.json" : "src\\assets\\search_json_stuff\\stopwords_spanish2.json");
 class SearchCRUDUC {
-    constructor(adRepo, artistaRepo, eventRepo, newsRepo, newsContentRepo, podcastEpisodeRepo, podcastRepo, tipoEntradaRepo) {
-        this.adRepo = adRepo;
-        this.artistaRepo = artistaRepo;
-        this.eventRepo = eventRepo;
+    constructor(newsRepo, newsContentRepo) {
         this.newsRepo = newsRepo;
         this.newsContentRepo = newsContentRepo;
-        this.podcastEpisodeRepo = podcastEpisodeRepo;
-        this.podcastRepo = podcastRepo;
-        this.tipoEntradaRepo = tipoEntradaRepo;
     }
     /* async sort_words() : Promise<any[] | null> {
         // Palabras del search_string a consideracion para la busqueda
@@ -100,10 +94,10 @@ class SearchCRUDUC {
             try {
                 //ads = await this.search4Ads(wordsToSearch)
                 //artistas = await this.search4Artista(wordsToSearch)
-                events = yield this.search4Events(wordsToSearch);
+                //events = await this.search4Events(wordsToSearch)
                 news = yield this.search4News(wordsToSearch);
-                podcasts_episodes = yield this.search4PodcastEpisodes(wordsToSearch);
-                podcasts = yield this.search4Podcasts(wordsToSearch);
+                //podcasts_episodes = await this.search4PodcastEpisodes(wordsToSearch)
+                //podcasts = await this.search4Podcasts(wordsToSearch)
             }
             catch (error) {
                 console.log(error);
@@ -111,16 +105,16 @@ class SearchCRUDUC {
             }
             return {
                 // Solo retorno las palabras a buscar mediante Events, con los otros modulos no para enviarlo al FrontEnd
-                words_to_search: events != null ? events[0].words_to_search : null,
+                //words_to_search: events != null ? events[0].words_to_search: null,
                 //ads: ads,
                 //artistas: artistas,
-                events: events[0].events,
+                //events: events[0].events,
                 // Retorno dividio en dos las noticias, en news las noticias que tienen resultados en sus propiedades, y en news_with_news_content
                 // las que tienen resultados solo en sus news_content
                 news: news != null ? news[0].news : null,
                 news_with_news_content: news != null ? news[0].news_with_news_content : null,
-                podcasts_episodes: podcasts_episodes,
-                podcasts: podcasts,
+                //podcasts_episodes: podcasts_episodes,
+                //podcasts: podcasts,
             };
         });
     }
@@ -134,28 +128,10 @@ class SearchCRUDUC {
     async search4Artista(wordsToSearch:string[]) : Promise<any[]> {
         return await this.artistaRepo.search4Artista(wordsToSearch)
     } */
-    // EVENTS
-    search4Events(wordsToSearch) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.eventRepo.search4Events(wordsToSearch);
-        });
-    }
     // NEWS
     search4News(wordsToSearch) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.newsRepo.search4News(wordsToSearch);
-        });
-    }
-    // PODCAST EPISODES 
-    search4PodcastEpisodes(wordsToSearch) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.podcastEpisodeRepo.search4PodcastEpisodes(wordsToSearch);
-        });
-    }
-    // PODCAST
-    search4Podcasts(wordsToSearch) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield this.podcastRepo.search4Podcasts(wordsToSearch);
         });
     }
 }

@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,7 +22,6 @@ exports.ORMNewsRepository = exports.NewsORM = void 0;
 const news_1 = require("../../domain/news");
 const typeorm_1 = require("typeorm");
 const orm_1 = require("../../news_content/repository/orm");
-const orm_2 = require("../../podcasts/repository/orm");
 let NewsORM = class NewsORM {
     toNews() {
         let news = new news_1.News();
@@ -48,49 +50,59 @@ let NewsORM = class NewsORM {
         return this;
     }
 };
+exports.NewsORM = NewsORM;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)({ unsigned: true })
+    (0, typeorm_1.PrimaryGeneratedColumn)({ unsigned: true }),
+    __metadata("design:type", Number)
 ], NewsORM.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "varchar", length: 150, nullable: false })
+    (0, typeorm_1.Column)({ type: "varchar", length: 150, nullable: false }),
+    __metadata("design:type", String)
 ], NewsORM.prototype, "titulo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "varchar", length: 250, nullable: false })
+    (0, typeorm_1.Column)({ type: "varchar", length: 250, nullable: false }),
+    __metadata("design:type", String)
 ], NewsORM.prototype, "subtitulo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false })
+    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false }),
+    __metadata("design:type", String)
 ], NewsORM.prototype, "seo_url", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false })
+    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false }),
+    __metadata("design:type", String)
 ], NewsORM.prototype, "img_url", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false })
+    (0, typeorm_1.Column)({ type: "varchar", length: 200, nullable: false }),
+    __metadata("design:type", String)
 ], NewsORM.prototype, "keywords", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "boolean", nullable: false, default: true })
+    (0, typeorm_1.Column)({ type: "boolean", nullable: false, default: true }),
+    __metadata("design:type", Boolean)
 ], NewsORM.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "datetime", nullable: true })
+    (0, typeorm_1.Column)({ type: "datetime", nullable: true }),
+    __metadata("design:type", Date)
 ], NewsORM.prototype, "publish_date", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)()
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
 ], NewsORM.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)()
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
 ], NewsORM.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => orm_1.NewsContentORM, newsContent => newsContent.news)
+    (0, typeorm_1.OneToMany)(() => orm_1.NewsContentORM, newsContent => newsContent.news),
+    __metadata("design:type", Array)
 ], NewsORM.prototype, "newsContent", void 0);
-NewsORM = __decorate([
+exports.NewsORM = NewsORM = __decorate([
     (0, typeorm_1.Entity)("news")
 ], NewsORM);
-exports.NewsORM = NewsORM;
 class ORMNewsRepository {
     constructor(dataSource) {
         this.dataSource = dataSource;
         this.newsRepoORM = this.dataSource.getRepository(NewsORM);
         this.newsContentRepoORM = this.dataSource.getRepository(orm_1.NewsContentORM);
-        this.podcastArticlesRepoORM = this.dataSource.getRepository(orm_2.PodcastArticlesORM);
     }
     // Common
     list() {
@@ -152,11 +164,7 @@ class ORMNewsRepository {
                     { id: id, publish_date: (0, typeorm_1.IsNull)() }
                 ],
             });
-            if (newsModel[0] === null) {
-                console.log('Not found!');
-                return null;
-            }
-            if (!newsModel[0].status) {
+            if (newsModel[0] === null || newsModel[0] === undefined || !newsModel[0].status) {
                 console.log('Not found!');
                 return null;
             }
@@ -177,6 +185,10 @@ class ORMNewsRepository {
                 return null;
             }
             const news = newsModel.map((newsORM) => newsORM.toNews());
+            if (news[0] === undefined) {
+                console.log('Not found!');
+                return null;
+            }
             return news[0];
         });
     }
@@ -293,46 +305,6 @@ class ORMNewsRepository {
                 return null;
             }
             const news = newsModel.map((newsORM) => newsORM.toNews());
-            return news;
-        });
-    }
-    // Podcast Articles
-    newsByPodcastID(podcastId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const podcastArticlesModels = yield this.podcastArticlesRepoORM.find({
-                where: { podcast_id: podcastId },
-                relations: { news: true },
-                order: { news_id: "DESC" },
-            });
-            const news = podcastArticlesModels.map((podcastArticles) => podcastArticles.news.toNews());
-            return news;
-        });
-    }
-    listUnlinkedNewsByPodcastId(podcastId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const podcastArticlesModels = yield this.podcastArticlesRepoORM.find({
-                where: {
-                    podcast_id: podcastId
-                }
-            });
-            if (podcastArticlesModels === null) {
-                console.log('Not found!');
-                return [];
-            }
-            let array_ids_news_already_linked = [];
-            podcastArticlesModels.forEach((podcast_article) => {
-                array_ids_news_already_linked.push(podcast_article.news_id);
-            });
-            console.log(array_ids_news_already_linked);
-            const newsModels = yield this.newsRepoORM.find({
-                where: {
-                    id: (0, typeorm_1.Not)((0, typeorm_1.In)(array_ids_news_already_linked))
-                },
-                order: {
-                    id: "DESC",
-                },
-            });
-            const news = newsModels.map((newsORM) => newsORM.toNews());
             return news;
         });
     }

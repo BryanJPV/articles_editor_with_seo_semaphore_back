@@ -51,6 +51,9 @@ class NewsContentCRUDUC {
                     try {
                         // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("La Imagen no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -81,6 +84,9 @@ class NewsContentCRUDUC {
                     try {
                         // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("El Video no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -92,7 +98,7 @@ class NewsContentCRUDUC {
                     news_content.contenido = verify_result[1]; // originalname_aux
                 }
                 try {
-                    // Se mueve la imagen solo despues de que se validó de forma definiva
+                    // Se mueve el Video solo despues de que se validó de forma definiva
                     //fs.renameSync(video_url_aux, ruta_to_save);
                     yield mvPromise(video_url_aux, ruta_to_save);
                 }
@@ -111,6 +117,9 @@ class NewsContentCRUDUC {
                     try {
                         // Envio como tercer parametro el false porque en registrar no debo verificar si es una imagen cropeada ya subida al servidor
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("El Audio no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -122,7 +131,7 @@ class NewsContentCRUDUC {
                     news_content.contenido = verify_result[1]; // originalname_aux
                 }
                 try {
-                    // Se mueve la imagen solo despues de que se validó de forma definiva
+                    // Se mueve el Audio solo despues de que se validó de forma definiva
                     //fs.renameSync(audio_url_aux, ruta_to_save);
                     yield mvPromise(audio_url_aux, ruta_to_save);
                 }
@@ -151,6 +160,9 @@ class NewsContentCRUDUC {
                     try {
                         // Envio contenido, tipo para el mensaje de error y el verificador de imagen ya subida en el servidor cropeada.
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, img_url_old_cropped);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("La Imagen no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -192,6 +204,9 @@ class NewsContentCRUDUC {
                     let verify_result = [];
                     try {
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("El Video no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -203,7 +218,7 @@ class NewsContentCRUDUC {
                     news_content.contenido = verify_result[1]; // originalname_aux
                     if (news_content_DB.contenido !== '' && news_content_DB.contenido !== null && news_content_DB.contenido !== undefined) {
                         try {
-                            this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url de la imagen vieja a reemplazar pa que se elimine
+                            this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url del Video viejo a reemplazar pa que se elimine
                         }
                         catch (error) {
                             console.error(error);
@@ -213,7 +228,7 @@ class NewsContentCRUDUC {
                     }
                 }
                 try {
-                    // Se mueven la imagen solo despues de que se validó de forma definiva
+                    // Se mueve el Video solo despues de que se validó de forma definiva
                     if (video_url_aux != "" && ruta_to_save != "") {
                         //fs.renameSync(img_url_aux, ruta_to_save);
                         yield mvPromise(video_url_aux, ruta_to_save);
@@ -233,6 +248,9 @@ class NewsContentCRUDUC {
                     let verify_result = [];
                     try {
                         verify_result = this.verifyFileExists(news_content.contenido, news_content.tipo, false);
+                        if (verify_result == null || verify_result == undefined || verify_result[0] == undefined || verify_result[1] == undefined) {
+                            throw new Error("El Audio no se cargó correctamente.");
+                        }
                     }
                     catch (error) {
                         console.error(error);
@@ -244,7 +262,7 @@ class NewsContentCRUDUC {
                     news_content.contenido = verify_result[1]; // originalname_aux
                     if (news_content_DB.contenido !== '' && news_content_DB.contenido !== null && news_content_DB.contenido !== undefined) {
                         try {
-                            this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url de la imagen vieja a reemplazar pa que se elimine
+                            this.deleteOldFileOnUpdate(news_content_DB.contenido, news_content_DB.tipo); // envio url del Audio viejo a reemplazar pa que se elimine
                         }
                         catch (error) {
                             console.error(error);
@@ -254,7 +272,7 @@ class NewsContentCRUDUC {
                     }
                 }
                 try {
-                    // Se mueven la imagen solo despues de que se validó de forma definiva
+                    // Se mueven el Audio solo despues de que se validó de forma definiva
                     if (audio_url_aux != "" && ruta_to_save != "") {
                         //fs.renameSync(img_url_aux, ruta_to_save);
                         yield mvPromise(audio_url_aux, ruta_to_save);
@@ -280,8 +298,8 @@ class NewsContentCRUDUC {
         });
     }
     delete(news_content_id_to_delete) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             try {
                 let newsToDelete = this.newsContentRepo.byID(news_content_id_to_delete);
                 if (newsToDelete === null) {
@@ -336,12 +354,14 @@ class NewsContentCRUDUC {
         if (new_image.includes('/')) {
             // linux
             array_string = new_image.split("/");
-            originalname_aux = array_string[array_string.length - 1];
         }
         else {
             // windows
             array_string = new_image.split("\\");
-            originalname_aux = array_string[array_string.length - 1];
+        }
+        let name = array_string[array_string.length - 1];
+        if (name == undefined) {
+            return null;
         }
         //console.log(originalname_aux);
         originalname_aux = originalname_aux.trim()

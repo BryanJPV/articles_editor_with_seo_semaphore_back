@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,38 +45,47 @@ let NewsContentORM = class NewsContentORM {
         return this;
     }
 };
+exports.NewsContentORM = NewsContentORM;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)({ unsigned: true })
+    (0, typeorm_1.PrimaryGeneratedColumn)({ unsigned: true }),
+    __metadata("design:type", Number)
 ], NewsContentORM.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "tinyint", nullable: false })
+    (0, typeorm_1.Column)({ type: "tinyint", nullable: false }),
+    __metadata("design:type", Number)
 ], NewsContentORM.prototype, "position", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "tinyint", nullable: false })
+    (0, typeorm_1.Column)({ type: "tinyint", nullable: false }),
+    __metadata("design:type", Number)
 ], NewsContentORM.prototype, "tipo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "text", nullable: true, /* default: "" */ })
+    (0, typeorm_1.Column)({ type: "text", nullable: true, /* default: "" */ }),
+    __metadata("design:type", String)
 ], NewsContentORM.prototype, "contenido", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "text", nullable: true, /*  default: "" */ })
+    (0, typeorm_1.Column)({ type: "text", nullable: true, /*  default: "" */ }),
+    __metadata("design:type", String)
 ], NewsContentORM.prototype, "descripcion", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => orm_1.NewsORM, newsOrm => newsOrm.newsContent),
-    (0, typeorm_1.JoinColumn)({ name: 'news_id' })
+    (0, typeorm_1.JoinColumn)({ name: 'news_id' }),
+    __metadata("design:type", orm_1.NewsORM)
 ], NewsContentORM.prototype, "news", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'int', unsigned: true })
+    (0, typeorm_1.Column)({ type: 'int', unsigned: true }),
+    __metadata("design:type", Number)
 ], NewsContentORM.prototype, "news_id", void 0);
 __decorate([
-    (0, typeorm_1.CreateDateColumn)()
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
 ], NewsContentORM.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)()
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
 ], NewsContentORM.prototype, "updatedAt", void 0);
-NewsContentORM = __decorate([
+exports.NewsContentORM = NewsContentORM = __decorate([
     (0, typeorm_1.Entity)("news_content")
 ], NewsContentORM);
-exports.NewsContentORM = NewsContentORM;
 class ORMNewsContentRepository {
     constructor(dataSource) {
         this.dataSource = dataSource;

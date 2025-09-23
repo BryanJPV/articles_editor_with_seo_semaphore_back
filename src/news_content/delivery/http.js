@@ -108,24 +108,29 @@ class NewsContentHandler {
             if (!isAuthenticated) {
                 return;
             }
-            let news_id_to_list = parseInt(req.params.news_id);
-            if (news_id_to_list == undefined) {
+            if (req.params.news_id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico."] });
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let news_id_to_list = (typeof req.params.news_id === 'string') ? parseInt(req.params.news_id) : req.params.news_id;
             let news_content_res = yield this.newsContentUC.listByNewsId(news_id_to_list);
             res.json(news_content_res);
         });
     }
     byID(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let id_to_search = parseInt(req.params.news_content_id);
+            if (req.params.news_content_id == undefined) {
+                res.status(400);
+                res.json({ error: ["El ID del Componente de la Noticia debe ser un valor numérico."] });
+                return;
+            }
+            let id_to_search = (typeof req.params.news_content_id === 'string') ? parseInt(req.params.news_content_id) : req.params.news_content_id;
             let news_content_res = null;
             try {
                 news_content_res = yield this.newsContentUC.byID(id_to_search);
@@ -147,18 +152,18 @@ class NewsContentHandler {
         });
     }
     register(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let news_id_to_register = parseInt(req.params.news_id);
-            if (news_id_to_register == undefined) {
+            if (req.params.news_id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico."] });
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let news_id_to_register = (typeof req.params.news_id === 'string') ? parseInt(req.params.news_id) : req.params.news_id;
             const payload = {
                 position: req.body.position,
                 tipo: req.body.tipo,
@@ -192,7 +197,7 @@ class NewsContentHandler {
                         break;
                     case "2": //{ value: 2, label: 'Imagen' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['img_url_blob'] == null) {
+                        if (files == undefined || files['img_url_blob'] == null || files['img_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -209,7 +214,7 @@ class NewsContentHandler {
                         break;
                     case "3": //{ value: 3, label: 'Video' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['video_url_blob'] == null) {
+                        if (files == undefined || files['video_url_blob'] == null || files['video_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -226,7 +231,7 @@ class NewsContentHandler {
                         break;
                     case "4": //{ value: 4, label: 'Sonido' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['audio_url_blob'] == null) {
+                        if (files == undefined || files['audio_url_blob'] == null || files['audio_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -285,18 +290,18 @@ class NewsContentHandler {
         });
     }
     update(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let news_content_id_to_update = parseInt(req.params.news_content_id);
-            if (news_content_id_to_update == undefined) {
+            if (req.params.news_content_id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico."] });
+                res.json({ error: ["El ID del Componente de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let news_content_id_to_update = (typeof req.params.news_content_id === 'string') ? parseInt(req.params.news_content_id) : req.params.news_content_id;
             // Validación cambio Tipo Componente de la Noticia
             let news_content_DB = null;
             try {
@@ -353,7 +358,7 @@ class NewsContentHandler {
                         break;
                     case "2": //{ value: 2, label: 'Imagen' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['img_url_blob'] == null) {
+                        if (files == undefined || files['img_url_blob'] == null || files['img_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -370,7 +375,7 @@ class NewsContentHandler {
                         break;
                     case "3": //{ value: 3, label: 'Video' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['video_url_blob'] == null) {
+                        if (files == undefined || files['video_url_blob'] == null || files['video_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -387,7 +392,7 @@ class NewsContentHandler {
                         break;
                     case "4": //{ value: 4, label: 'Sonido' },
                         // Si no se envia una file entonces se deja vacio el contenido
-                        if (files == undefined || files['audio_url_blob'] == null) {
+                        if (files == undefined || files['audio_url_blob'] == null || files['audio_url_blob'][0] == undefined) {
                             contenido_content_name = "";
                         }
                         else {
@@ -450,18 +455,18 @@ class NewsContentHandler {
         });
     }
     delete(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let news_content_id_to_delete = parseInt(req.params.news_content_id);
-            if (news_content_id_to_delete == undefined) {
+            if (req.params.news_content_id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico"] });
+                res.json({ error: ["El ID del Componente de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let news_content_id_to_delete = (typeof req.params.news_content_id === 'string') ? parseInt(req.params.news_content_id) : req.params.news_content_id;
             let deletedNewsContent = null;
             try {
                 deletedNewsContent = yield this.newsContentUC.delete(news_content_id_to_delete);

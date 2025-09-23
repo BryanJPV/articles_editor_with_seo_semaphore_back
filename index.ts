@@ -85,8 +85,8 @@ let searchUC = new SearchCRUDUC(newsRepo, newsContentRepo);
 let semaforoSeoUC = new SemaforoSeoCRUDUC();
 
 // API Initialization
-let privateKey  = fs.readFileSync('certs/server.key', 'utf8');
-let certificate = fs.readFileSync('certs/server.crt', 'utf8');
+let privateKey  = fs.readFileSync('./certs/server.key', 'utf8');
+let certificate = fs.readFileSync('./certs/server.crt', 'utf8');
 
 let credentials = { key: privateKey, cert: certificate };
 const port = 5000;

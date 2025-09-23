@@ -127,13 +127,18 @@ class NewsAdminHandler {
         });
     }
     byID(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let id_to_search = parseInt(req.params.id);
+            if (req.params.id == undefined) {
+                res.status(400);
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
+                return;
+            }
+            let id_to_search = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
             let news = null;
             try {
                 news = yield this.newsUC.byID(id_to_search);
@@ -155,8 +160,8 @@ class NewsAdminHandler {
         });
     }
     register(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
@@ -189,7 +194,7 @@ class NewsAdminHandler {
             let image_name = null;
             try {
                 // VALIDACIÓN FILE IMG
-                if (files == undefined || files['img_url_blob'] == null) {
+                if (files == undefined || files['img_url_blob'] == null || files['img_url_blob'][0] == undefined) {
                     res.status(400);
                     res.json({ error: ["No se puede registrar la Noticia sin subir ninguna Imagen."] });
                     return;
@@ -246,18 +251,18 @@ class NewsAdminHandler {
         });
     }
     update(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let id_to_update = parseInt(req.params.id);
-            if (id_to_update == undefined || typeof id_to_update != "number") {
+            if (req.params.id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico."] });
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let id_to_update = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
             // Parsing Seo_Url
             let seo_url_parseado = yield this.parsingSeoUrl(req.body.seo_url);
             const payload = {
@@ -287,7 +292,7 @@ class NewsAdminHandler {
             try {
                 // VALIDACIÓN FILE IMG
                 if (files != undefined) {
-                    if (files['img_url_blob'] != undefined && files['img_url_blob'] != null) {
+                    if (files['img_url_blob'] != undefined && files['img_url_blob'] != null && files['img_url_blob'][0] != undefined) {
                         // VALIDACIÓN PESO FILE IMG
                         let peso_img_url_blob = files['img_url_blob'][0].size;
                         let peso_max_img_url_blob = 15 * 1024 * 1024; // 15Mb
@@ -346,21 +351,21 @@ class NewsAdminHandler {
         });
     }
     delete(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let isAuthenticated = yield this.verifyAuth(req, res);
             if (!isAuthenticated) {
                 return;
             }
-            let id = parseInt(req.params.id);
-            if (id == undefined) {
+            if (req.params.id == undefined) {
                 res.status(400);
-                res.json({ error: ["El id debe ser un valor numérico"] });
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
                 return;
             }
+            let id_to_delete = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
             let newNews = null;
             try {
-                newNews = yield this.newsUC.delete(id);
+                newNews = yield this.newsUC.delete(id_to_delete);
                 if (newNews == null) {
                     res.status(400);
                     res.json({ error: ["Error al buscar la Noticia a eliminar o Noticia no encontrado."] });

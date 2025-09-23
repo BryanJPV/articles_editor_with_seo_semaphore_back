@@ -30,8 +30,8 @@ class SearchHandler {
         res.json({ data: search_res });
     } */
     search(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const payload = {
                 search_string: req.body.search_string,
             };

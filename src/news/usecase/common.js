@@ -18,9 +18,14 @@ class NewsCommonUC {
     list() {
         return __awaiter(this, void 0, void 0, function* () {
             let newsList = yield this.newsRepo.list();
-            for (let index = 0; index < newsList.length; index++) {
-                let newsContentList = yield this.newsContentRepo.listByNewsId(newsList[index].id);
-                newsList[index].news_content = newsContentList;
+            if (newsList.length == 0 || newsList == null || newsList == undefined) {
+                return [];
+            }
+            for (const item of newsList) {
+                if (!item)
+                    continue;
+                let newsContentList = yield this.newsContentRepo.listByNewsId(item.id);
+                item.news_content = newsContentList;
             }
             return newsList;
         });
@@ -28,14 +33,16 @@ class NewsCommonUC {
     listByPagination(inicio, cantidad) {
         return __awaiter(this, void 0, void 0, function* () {
             let newsList = yield this.newsRepo.listByPagination(inicio, cantidad);
-            if (newsList != null && newsList !== undefined) {
-                for (let index = 0; index < newsList.length; index++) {
-                    let newsContentList = yield this.newsContentRepo.listByNewsId(newsList[index].id);
-                    newsList[index].news_content = newsContentList;
-                }
-                return newsList;
+            if (newsList.length == 0 || newsList == null || newsList == undefined) {
+                return [];
             }
-            return [];
+            for (const item of newsList) {
+                if (!item)
+                    continue;
+                let newsContentList = yield this.newsContentRepo.listByNewsId(item.id);
+                item.news_content = newsContentList;
+            }
+            return newsList;
         });
     }
     byID(id) {

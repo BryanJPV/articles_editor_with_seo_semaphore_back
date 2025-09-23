@@ -54,9 +54,14 @@ class NewsCommonHandler {
         });
     }
     byID(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            let id_to_search = parseInt(req.params.id);
+            var _a;
+            if (req.params.id == undefined) {
+                res.status(400);
+                res.json({ error: ["El ID de la Noticia debe ser un valor numérico."] });
+                return;
+            }
+            let id_to_search = (typeof req.params.id === 'string') ? parseInt(req.params.id) : req.params.id;
             let news = null;
             try {
                 news = yield this.newsUC.byID(id_to_search);
@@ -78,8 +83,13 @@ class NewsCommonHandler {
         });
     }
     bySeoURL(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            if (req.params.seo_url == undefined) {
+                res.status(400);
+                res.json({ error: ["El SEO URL de la Noticia debe ser una cadena de caracteres."] });
+                return;
+            }
             let seo_url_to_search = req.params.seo_url;
             let news = null;
             try {

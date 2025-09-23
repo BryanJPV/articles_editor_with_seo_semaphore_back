@@ -30,8 +30,8 @@ class UserHandler {
         apiInstance.use('/user', subRouter);
     }
     checkTokenExpiration(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let expiration_res_token = null;
             try {
                 expiration_res_token = yield this.userUC.checkTokenExpiration(req.body.remember_token);
@@ -53,8 +53,8 @@ class UserHandler {
         });
     }
     login(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const payload = {
                 usermail: req.body.usermail,
                 password: req.body.password,
@@ -93,8 +93,8 @@ class UserHandler {
         });
     }
     changeUserPassword(req, res) {
-        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
             let expiration_res_token = null;
             try {
                 expiration_res_token = yield this.userUC.checkTokenExpiration(req.body.remember_token);
@@ -152,8 +152,8 @@ class UserHandler {
         });
     }
     getUserData(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let user_data_res = null;
             try {
                 user_data_res = yield this.userUC.getUserData(req.body.remember_token);

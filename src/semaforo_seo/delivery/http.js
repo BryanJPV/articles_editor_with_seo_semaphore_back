@@ -21,8 +21,8 @@ class SemaforoSeoHandler {
         apiInstance.use('/semaforo_seo', subRouter);
     }
     pasive_voice_analisis(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             let pasive_voice_analisis_porcentaje_res = null;
             try {
                 if (req.body != null && req.body != undefined) {

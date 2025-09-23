@@ -27,9 +27,9 @@
 
 
     // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "sourceMap": false,       // ❌ no genera .map
+    "declaration": false,     // ❌ no genera .d.ts
+    "declarationMap": false,   // ❌ no genera .d.ts.map
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
@@ -51,7 +51,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "outDir": "./dist",
+    //"outDir": "./dist",
     "rootDir": "./",
 
   },
